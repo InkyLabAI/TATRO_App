@@ -196,7 +196,7 @@ app.layout = html.Div([
             html.Div([
                 html.Div([
                     html.Label("Spoken Language:"),
-                    dcc.Dropdown(id="source-dd", options=["Hebrew", "Arabic", "English", "French", "Spanish", "Chinese", "Turkish"], value="Hebrew")
+                    dcc.Dropdown(id="source-dd", options=["Hebrew", "Arabic", "English", "French", "Spanish", "Chinese", "Turkish"], value="English")
                 ], style={"width": "48%", "display": "inline-block"}),
                 html.Div([
                     html.Label("Translate Into:"),
