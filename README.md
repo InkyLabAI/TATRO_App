@@ -1,107 +1,212 @@
-# ATRA
+# TATRO Application
 
-ATRA is a fully offline application designed to transcribe Hebrew video and audio content, translate the transcription into Arabic, and retrieve relevant video segments based on Arabic-language queries.
-
-The entire pipeline runs locally using lightweight language models and can operate on a GPU with as little as 8 GB of VRAM.
-
----
+**TATRO** is an offline AI-powered audio processing application that transcribes, translates, summarizes and rertrieve video segment based on user input query. 
 
 ## Features
 
-* Fully offline processing
-* Hebrew speech-to-text transcription
-* Speaker diarization
-* Hebrew-to-Arabic translation
-* Arabic semantic search over transcriptions
-* Relevant video segment retrieval
-* JSON and PDF export
-* Lightweight deployment (8 GB GPU compatible)
+* 🎙 **Automatic speech transcription**
+* 🌍 **Translation** between user-selected input and output languages
+* ✨ **AI-powered transcript correction** before translation (Optional)
+* 👥 **Speaker diarization** with speaker-labeled transcripts
+* 📄 **Translated PDF** generation
+* 🔍 **Semantic retrieval** to locate the most relevant video segments from natural language queries
+* 📝 **Automatic summarization**
 
----
+## AI Models
 
-## Project Overview
+* **Speech Recognition:** Whisper
+* **Transcript Correction:** Qwen 3.5 9B
+* **Translation:** Qwen 3.5 9B
 
-The application consists of the following components:
+## Supported Languages
 
-### Core Modules
+* Input and output languages are fully configurable by the user.
+* Translation quality varies depending on the selected language pair and the underlying language model.
 
-* **ASR.py**
-  Performs Hebrew video/audio transcription, including speaker diarization, audio chunking, and export of results in JSON and PDF formats.
+## Roadmap
 
-* **Translation.py**
-  Translates the Hebrew transcription into Arabic and saves the translated output in JSON and PDF formats.
+### Version 1
 
-* **InferenceQuery.py**
-  Retrieves the most relevant video segment based on an Arabic-language query.
+* ✅ Speech transcription
+* ✅ Transcript correction
+* ✅ Translation
+* ✅ Speaker-labeled PDF export
 
-* **app.py**
-  Provides a user-friendly interface that allows users to:
+### Version 2
 
-  * Load a video
-  * Generate a transcription
-  * Translate the transcription
-  * Ask questions in Arabic
-  * Receive both a textual answer and the corresponding relevant video segment
+* 🚧 Semantic retrieval from translated transcripts
+* 🚧 Automatic video summarization
+* 🚧 Additional search and analysis capabilities
 
-### Evaluation and Benchmarking
 
-* **ASR_Benchmark**
-  Evaluation of multiple Automatic Speech Recognition (ASR) models across different datasets to identify the most effective Hebrew transcription model. See the README inside the folder for details.
+# Project Structure
 
-* **Translation_Benchmark**
-  Evaluation of various offline Hebrew-to-Arabic translation models using multiple datasets. See the README inside the folder for details.
-
-* **Embedding_Evaluation**
-  Benchmarking of different embedding models and retrieval strategies for semantic search and segment retrieval.
-
----
-
-## Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/mhmddirany/Video-Transcription-Hebrew-ASR-Pipeline.git
-cd Video-Transcription-Hebrew-ASR-Pipeline
+```
+.
+├── app.py
+├── main.py
+├── transcription.py
+├── translation.py
+├── requirements.txt
+└── README.md
 ```
 
-### 2. Install Dependencies
+---
+
+# Files
+
+## `transcription.py`
+
+### Input
+
+- MP4 video
+- Spoken language
+- Merge count (4)
+
+### What it does
+
+- Extracts audio
+- Performs speaker diarization using Pyannote
+- Create audio chunk based on results of diarization: remove silence, one speaker, maximum length = 30 sec
+- Transcribes each chunk with Whisper
+- Correct the transcription (optional)
+- Merges consecutive chunks belong to the same user (max 4)
+
+### Output
+
+`<video_name>_transcript.json`
+
+Each entry contains:
+
+- Speaker label
+- Speaker number
+- Start time
+- End time
+- Duration
+- Raw transcription
+
+---
+
+## `translation.py`
+
+### Input
+
+- Transcript JSON
+
+### Output
+
+#### `<video_name>_translated.json`
+
+Contains:
+
+- Speaker
+- Start / End
+- Duration
+- Raw transcription
+- Translation
+
+This file is intended for: Embedding, Semantic search and Retrieval
+
+#### `<video_name>_translation_final.pdf`
+- A clean, readable, and user-friendly translated text.
+---
+
+## `main.py`
+
+Pipeline orchestrator.
+
+### Input
+
+- MP4 file
+- Spoken language
+- Merge count
+
+Runs:
+
+1. `transcribe_video()`
+2. `translate_transcript()`
+
+### CLI Example
+
+```bash
+python main.py --input "/path/video.mp4" --language en --merge 3
+```
+
+---
+
+# `app.py`
+
+The main Dash web application that provides an interactive interface for uploading videos, generating transcriptions, translating content, creating summaries, and interacting with translated documents.
+
+## Features
+
+* **Upload MP4 videos** for processing.
+* **Select the source video and target translation language.**
+* **Configure the merge count** for transcription and translation processing.
+* **Provide a Hugging Face access token** to enable AI-powered features.
+* **Monitor live progress updates** throughout the processing pipeline.
+* **Skip transcription by uploading an existing transcript**, then proceed directly to translation.
+* **Preview the translated PDF**, or upload your own PDF for translation and review.
+* **Generate AI-powered summaries** from the translated PDF and preview the results.
+* **Chat with the translated document** using the integrated chatbot to ask questions and explore the content interactively.
+
+
+# Installation
+
+Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure Your Hugging Face Token
+Additional requirements:
 
-Add your Hugging Face access token as required by the models used in the project.
+- FFmpeg
+- Hugging Face token
+- Access to:
+  - `pyannote/speaker-diarization-3.1`
 
 ---
 
-## Usage
+# Running
 
-### Run the Application
+## Web Interface (Recommended)
 
 ```bash
+export HF_TOKEN=your_token_here
 python app.py
 ```
 
-### Steps
+Windows PowerShell:
 
-1. Select the input video file.
-2. Specify the output directory (optional).
-3. Wait for the transcription and translation processes to complete. Processing time depends on the audio duration and hardware configuration.
-4. Enter your question in Arabic using the chat interface.
-5. Receive:
+```powershell
+$env:HF_TOKEN="your_token_here"
+python app.py
+```
 
-   * The relevant text response
-   * The corresponding video segment containing the answer
+Then:
+
+- Open the generated URL
+- Upload a video
+- Select language
+- Click **Run**
+- Download or preview the PDF
 
 ---
 
-## System Requirements
+## Command Line
 
-### Recommended
+```bash
+python main.py \
+    --input "/path/video.mp4" \
+    --language ar (arabic)
+    --merge 3
+```
 
-* NVIDIA GPU with 8 GB VRAM
-* Python 3.10+
-* CUDA-compatible environment
+More options:
+
+```bash
+python main.py --help
+```
+
+Running without arguments starts interactive mode.
