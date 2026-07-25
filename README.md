@@ -2,6 +2,8 @@
 
 **TATRO** is an offline AI-powered audio processing application that transcribes, translates, summarizes and rertrieve video segment based on user input query. 
 
+**Main Contribution**: Complete local execution on 8–40 GB GPUs.
+
 ## Features
 
 * 🎙 **Automatic speech transcription**
