@@ -79,7 +79,7 @@ def main():
     config = {
         "whisper_model": "large-v3",
         "diarization_model": "pyannote/speaker-diarization-3.1",
-        "qwen_model": "Qwen/Qwen3-4B-Instruct-2507-FP8",  # used for both optional ASR correction and translation
+        "qwen_model": "Qwen/Qwen3.5-9B",  # used for both optional ASR correction and translation
         "max_chunk_duration": 30.0,
         "merge_window": args.merge,
         "translation_max_new_tokens": 1000,

@@ -706,12 +706,12 @@ if __name__ == "__main__":
     input_path = Path("/mnt/c/Users/ahhac/Desktop/Ar_Heb_ASR_Translation/video_demo.mp4")
     output_dir = Path("mnt/c/Users/ahhac/Desktop/Ar_Heb_ASR_Translation")
     output_dir.mkdir(parents=True, exist_ok=True)
-    hf_token = "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"
+    hf_token = "test"
     source_selected = LANGUAGES["1"]  # Hebrew
     config = {
             "whisper_model": "large-v3",
             "diarization_model": "pyannote/speaker-diarization-3.1",
-            "qwen_model": "Qwen/Qwen3-4B-Instruct-2507-FP8",
+            "qwen_model": "Qwen/Qwen3.5-9B",
             "max_chunk_duration": 30.0,
             "merge_window": 3,
             "max_new_tokens": 2048,
