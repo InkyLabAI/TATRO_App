@@ -1,11 +1,65 @@
-arabic_reshaper==3.0.1
-dash==4.4.1
-faster_whisper==1.2.1
-Flask==3.1.3
-librosa==0.11.0
-numpy==2.5.1
-pandas==3.0.5
-protobuf==7.35.1
-reportlab==5.0.0
-torch==2.12.1
-transformers==5.14.1
+# TATRO complete GPU environment: Linux/WSL2 x86_64 with an NVIDIA GPU.
+# Python >=3.11; 3.11/3.12 recommended.
+# Install matching torch + torchaudio builds for your GPU/driver FIRST.
+# Install packaging, setuptools, wheel and ninja BEFORE resolving this file.
+# CUDA_HOME/bin/nvcc and a C++ compiler must already be available.
+# Then: python -m pip install --no-build-isolation -r requirements.txt
+# This file is a version range manifest, not an environment lockfile.
+# pip resolves the libraries' remaining transitive dependencies automatically.
+
+# Web interface and local file serving
+dash>=3.1,<5
+Flask>=3.0,<4
+
+# Data, audio processing, transcription, and speaker detection
+numpy>=1.26,<3
+pandas>=2.2,<4
+faster-whisper>=1.2,<2
+ctranslate2>=4.4,<5
+pyannote.audio>=4.0,<5
+librosa>=0.11,<1
+soundfile>=0.13,<1
+
+# Local language models and embeddings
+# Keep torch and torchaudio on matching releases and CUDA builds.
+# torchcodec must be compatible with that PyTorch release.
+torch>=2.8,<3
+torchaudio>=2.8,<3
+torchcodec>=0.7,<1
+transformers>=5.3,<6
+accelerate>=1.0,<2
+sentence-transformers>=5.0,<6
+huggingface-hub>=0.28.1,<2
+tokenizers>=0.21,<1
+safetensors>=0.5.2,<1
+
+# PDF generation and Arabic/Hebrew layout
+reportlab>=4.2,<6
+arabic-reshaper>=3.0,<4
+python-bidi>=0.6,<1
+
+# Python build helpers (install BEFORE native CUDA extensions).
+packaging>=24
+setuptools>=70.1
+wheel
+ninja
+
+# NVIDIA GPU acceleration (Linux/WSL2 x86_64 deployment)
+flash-linear-attention[cuda]>=0.5
+causal-conv1d>=1.5,<2
+
+# CUDA 12 runtime libraries used by Faster-Whisper/CTranslate2.
+# These do not provide nvcc. Configure LD_LIBRARY_PATH per README.md.
+nvidia-cublas-cu12
+nvidia-cudnn-cu12>=9,<10
+
+# Testing and PDF inspection
+pytest>=8,<10
+pypdf>=5,<8
+PyMuPDF>=1.24,<3
+
+# System dependencies are NOT pip packages:
+# FFmpeg; Unicode fonts; python3-tk for the native Linux file picker;
+# Windows PowerShell interop for the WSL picker; compatible NVIDIA driver;
+# CUDA Toolkit/nvcc + C++ compiler when building causal-conv1d.
+# See README.md for setup, CUDA_HOME, and LD_LIBRARY_PATH instructions.

@@ -4,3 +4,10 @@ __pycache__/
 .env
 fypoutput/
 *.deb
+
+.venv/
+.venv-wsl/
+.venv-linux/
+.pytest_cache/
+tmp/
+tests
